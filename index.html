@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sisema News</title>
+    <title>PDDS</title>
+    
+    <link rel="manifest" href="manifest.json">
     
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     
+    <meta property="og:title" content="PDDS - Por Dentro Do Sisema">
+    <meta property="og:description" content="Acesse o gerador de boletins de notícias ambientais.">
+    <meta property="og:image" content="https://sisema07.github.io/sisema07/icon.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    
     <style>
         body {
-            background-color: #0e1117; /* Cor de fundo escura igual do Streamlit */
+            background-color: #0e1117;
             color: white;
             font-family: sans-serif;
             display: flex;
@@ -21,32 +30,80 @@
             margin: 0;
             text-align: center;
         }
-        img {
+        img.logo {
             width: 120px;
             margin-bottom: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        a {
-            background-color: #ff4b4b; /* Vermelho Streamlit (ou mude para verde) */
+        h1 { margin-bottom: 5px; }
+        p { color: #aaa; margin-bottom: 30px; }
+        
+        /* Botão Principal */
+        a.btn-start {
+            background-color: #ff4b4b;
             color: white;
-            padding: 15px 30px;
+            padding: 15px 40px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-weight: bold;
             font-size: 18px;
+            box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4);
+            transition: transform 0.2s;
+        }
+        a.btn-start:active { transform: scale(0.95); }
+
+        /* Botão de Instalar (Escondido inicialmente) */
+        #installBtn {
+            display: none; /* Só aparece se o navegador permitir */
+            margin-top: 20px;
+            background-color: transparent;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <img src="icon.png" alt="Logo">
+    <img src="icon.png" alt="Logo PDDS" class="logo">
     
-    <h1>Sisema News</h1>
-    <p>Toque abaixo para iniciar</p>
+    <h1>PDDS</h1>
+    <p>Por Dentro Do Sisema</p>
     
-    <br>
-    
-    <a href="https://3svuz6yeacjlzle3ztacxg.streamlit.app/">ACESSAR SISTEMA</a>
+    <a href="https://3svuz6yeacjlzle3ztacxg.streamlit.app/" class="btn-start">ABRIR SISTEMA</a>
+
+    <button id="installBtn">📲 Instalar App no Celular</button>
+
+    <script>
+        // Lógica para capturar o evento de instalação do Chrome/Android
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Impede que o mini-infobar padrão apareça sozinho (opcional)
+            e.preventDefault();
+            // Guarda o evento para usar depois
+            deferredPrompt = e;
+            // Mostra o nosso botão de instalar
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Dispara o prompt nativo do Android
+                deferredPrompt.prompt();
+                // Espera o usuário responder
+                const { outcome } = await deferredPrompt.userChoice;
+                // Esconde o botão depois que usar
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>
